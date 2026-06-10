@@ -3,239 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>R-K-V-F-M Prompt Generator Pro</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AI UP | Smart Day Platform</title>
     <style>
-        /* Fokus bo'lganda maydonlarni chiroyli effekt berish */
-        textarea:focus {
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        :root {
+            --bg-color: #0a0f1d;
+            --card-bg: #141b2d;
+            --neon-blue: #00f0ff;
+            --neon-green: #39ff14;
+            --neon-red: #ff3131;
+            --text-color: #ffffff;
+            --text-muted: #8a99ad;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header va Brending */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        header h1 span {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        header p {
+            color: var(--text-muted);
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        /* Analitika Paneli (Dashboard) */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card h3 {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+        }
+
+        /* Yangi Vazifa Qo'shish */
+        .add-task-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 15px;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+        }
+
+        input, select, button {
+            background: #1f293d;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            color: white;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        button.add-btn {
+            background: var(--neon-blue);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+
+        button.add-btn:hover {
+            box-shadow: 0 0 15px var(--neon-blue);
+            transform: scale(1.02);
+        }
+
+        /* Vazifalar Ro'yxati */
+        .task-list {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .task-list h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--neon-blue);
+            padding-left: 10px;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #1a2235;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--text-muted);
+            transition: 0.3s;
+        }
+
+        .task-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .task-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .task-time {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-check {
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+        }
+
+        .btn-check:hover {
+            background: var(--neon-green);
+            color: black;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .btn-fail {
+            background: rgba(255, 49, 49, 0.1);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
+        }
+
+        .btn-fail:hover {
+            background: var(--neon-red);
+            color: white;
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+
+        /* Status Stillari */
+        .task-item.done {
+            border-left-color: var(--neon-green);
+            opacity: 0.6;
+        }
+        .task-item.done .task-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        .task-item.failed {
+            border-left-color: var(--neon-red);
+            opacity: 0.6;
+        }
+        .task-item.failed .task-title {
+            color: var(--neon-red);
+        }
+
+        @media (max-width: 600px) {
+            .add-task-form {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body>
 
-    <header class="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-10 shadow-sm">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 text-white p-2 rounded-xl font-bold text-xl tracking-wider shadow-md shadow-indigo-200">R-K-V-F-M</div>
-                <div>
-                    <h1 class="text-xl font-bold text-slate-900">Prompt Injiniring Pro</h1>
-                    <p class="text-xs text-slate-500">Strukturaviy promptlar yaratish va biznesni avtomatlashtirish platformasi</p>
-                </div>
-            </div>
-            <div class="text-sm bg-indigo-50 text-indigo-700 px-4 py-2 rounded-full font-semibold border border-indigo-100 flex items-center gap-2">
-                <i class="fa-solid fa-graduation-cap"></i> Najot Ta'lim &copy; 2026
-            </div>
-        </div>
+<div class="container">
+    <header>
+        <h1>AI UP <span>Smart Day</span></h1>
+        <p>Vaqtingiz auditi va samaradorlikni nazorat qilish paneli</p>
     </header>
 
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
-            
-            <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 space-y-2.5">
-                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <i class="fa-solid fa-bolt text-amber-500"></i> Tayyor Biznes Shablonlar
-                </h3>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="loadTemplate('b2b')" class="text-xs bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-cake-candles text-pink-500"></i> B2B Sovg'alar (Safia)
-                    </button>
-                    <button onclick="loadTemplate('crisis')" class="text-xs bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Inqirozli PR (Uzrnomalar)
-                    </button>
-                    <button onclick="loadTemplate('edutech')" class="text-xs bg-white hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200 hover:border-indigo-200 px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-brain text-purple-500"></i> Edu-Tech (Kurs marketingi)
-                    </button>
-                </div>
+    <div class="dashboard">
+        <div class="stat-card">
+            <h3>Jami Reja</h3>
+            <div class="value" id="total-hours">0 soat</div>
+        </div>
+        <div class="stat-card">
+            <h3>Bajarildi (✅)</h3>
+            <div class="value" id="done-hours" style="color: var(--neon-green);">0 soat</div>
+        </div>
+        <div class="stat-card">
+            <h3>Bajarilmadi (❌)</h3>
+            <div class="value" id="failed-hours" style="color: var(--neon-red);">0 soat</div>
+        </div>
+    </div>
+
+    <div class="add-task-form">
+        <input type="text" id="task-name" placeholder="Bugun nima ish qilasiz? (Masalan: Kod yozish)">
+        <input type="number" id="task-duration" placeholder="Kutilayotgan soat (Masalan: 2)" min="0.5" step="0.5">
+        <button class="add-btn" onclick="addTask()">Qo'shish</button>
+    </div>
+
+    <div class="task-list">
+        <h2>Bugungi vazifalar tartibi</h2>
+        <div id="tasks-container">
             </div>
+    </div>
+</div>
 
-            <div class="space-y-4">
-                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/30 hover:border-indigo-200 transition">
-                    <label class="block text-sm font-semibold text-slate-900 mb-1.5 flex justify-between items-center">
-                        <span><span class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-1.5">R</span> Rol (Persona)</span>
-                        <span class="text-xs font-normal text-slate-400">AI kim sifatida gapirsin?</span>
-                    </label>
-                    <textarea id="role" rows="2" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition resize-none" placeholder="Masalan: Sen B2B sohasida tajribali, o'ta aqlli kopiraytersan."></textarea>
-                </div>
+<script>
+    // Vazifalarni saqlash uchun massiv
+    let tasks = [];
 
-                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/30 hover:border-indigo-200 transition">
-                    <label class="block text-sm font-semibold text-slate-900 mb-1.5 flex justify-between items-center">
-                        <span><span class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-1.5">K</span> Kontekst (Vaziyat / Muammo)</span>
-                        <span class="text-xs font-normal text-slate-400">Asosiy vaziyat va mijoz dardi nima?</span>
-                    </label>
-                    <textarea id="context" rows="3" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition" placeholder="Masalan: Yirik kompaniyalarning HR-menejerlariga bayram tortlarini sotishimiz kerak. Ularning dardi — vaqt yetishmasligi."></textarea>
-                </div>
+    // Yangi vazifa qo'shish funksiyasi
+    function addTask() {
+        const nameInput = document.getElementById('task-name');
+        const durationInput = document.getElementById('task-duration');
 
-                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/30 hover:border-indigo-200 transition">
-                    <label class="block text-sm font-semibold text-slate-900 mb-1.5 flex justify-between items-center">
-                        <span><span class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-1.5">V</span> Vazifa (Task)</span>
-                        <span class="text-xs font-normal text-slate-400">AI aniq qanday topshiriqni bajarsin?</span>
-                    </label>
-                    <textarea id="task" rows="2" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition resize-none" placeholder="Masalan: Shu HRlarga boshog'rig'idan qutulishni taklif etuvchi savdo matnini yoz."></textarea>
-                </div>
-
-                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/30 hover:border-indigo-200 transition">
-                    <label class="block text-sm font-semibold text-slate-900 mb-1.5 flex justify-between items-center">
-                        <span><span class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-1.5">F</span> Format (Tuzilishi)</span>
-                        <span class="text-xs font-normal text-slate-400">Matn shakli, limiti va platformasi</span>
-                    </label>
-                    <textarea id="format" rows="2" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition resize-none" placeholder="Masalan: Telegram post formatida, maksimal 3 ta xatboshi bo'lsin."></textarea>
-                </div>
-
-                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/30 hover:border-indigo-200 transition">
-                    <label class="block text-sm font-semibold text-slate-900 mb-1.5 flex justify-between items-center">
-                        <span><span class="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded font-bold mr-1.5">M</span> Muloqot Ohangi (Tone)</span>
-                        <span class="text-xs font-normal text-slate-400">Matn qanday kayfiyatda bo'lishi shart?</span>
-                    </label>
-                    <textarea id="tone" rows="2" class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-indigo-500 transition resize-none" placeholder="Masalan: Jiddiy biznes tilda, ortiqcha pafos va romantikasiz."></textarea>
-                </div>
-            </div>
-
-            <div class="flex justify-end pt-2">
-                <button id="clearBtn" class="text-sm font-medium text-rose-600 hover:bg-rose-50 px-4 py-2.5 rounded-xl transition flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-trash-can"></i> Maydonlarni tozalash
-                </button>
-            </div>
-        </section>
-
-        <section class="lg:col-span-5 flex flex-col h-full">
-            <div class="bg-slate-900 text-slate-100 rounded-2xl p-6 shadow-xl flex-1 flex flex-col border border-slate-800 sticky top-24">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-terminal text-emerald-400"></i> Tayyor Prompt Terminali
-                    </h2>
-                    <span class="text-[10px] font-bold tracking-widest text-slate-400 bg-slate-800 px-2 py-1 rounded uppercase">Live</span>
-                </div>
-
-                <div class="flex-1 bg-slate-950 rounded-xl p-4 border border-slate-800 overflow-y-auto text-sm font-mono leading-relaxed text-slate-300 min-h-[350px] max-h-[500px]" id="promptResult">
-                    </div>
-
-                <div class="mt-4 p-3 bg-indigo-950/50 border border-indigo-900/50 rounded-xl text-xs text-indigo-300 flex gap-2.5 items-start">
-                    <i class="fa-solid fa-shield-halved text-indigo-400 mt-0.5"></i>
-                    <p><strong>Kalkaga qarshi blok:</strong> Sun'iy intellekt matnni sun'iy (tarjima) tilda yozmasligi uchun maxsus o'zbek tili qoidalari avtomatik qo'shiladi.</p>
-                </div>
-
-                <div class="mt-4">
-                    <button id="copyBtn" class="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-bold py-3.5 px-4 rounded-xl transition shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 cursor-pointer text-base">
-                        <i class="fa-regular fa-copy"></i> Promptni Nusxalash
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-400 mt-8">
-        Najot Ta'lim loyihasi — Prompt Injiniring [Matn Sehri va Prompt Anatomiyasi](https://prompt.iakadirov.uz/dars.html?id=1) darsligi asosida mukammallashtirildi.
-    </footer>
-
-    <script>
-        const inputs = {
-            role: document.getElementById('role'),
-            context: document.getElementById('context'),
-            task: document.getElementById('task'),
-            format: document.getElementById('format'),
-            tone: document.getElementById('tone')
-        };
-
-        const promptResult = document.getElementById('promptResult');
-        const copyBtn = document.getElementById('copyBtn');
-        const clearBtn = document.getElementById('clearBtn');
-
-        // Tayyor shablonlar ma'lumotlar bazasi
-        const templates = {
-            b2b: {
-                role: "Sen O'zbekiston bozorini mukammal tushunadigan, B2B sohasida katta tajribaga ega agressiv va o'ta aqlli kopiraytersan.",
-                context: "Biz yaqinlashib kelayotgan bayram uchun yirik kompaniyalarning HR-menejerlariga va rahbarlariga brendlashtirilgan korporativ shokolad va kofe sovg'alarini sotishimiz kerak. HRlarning eng katta dardi — dekabr oyida vaqt yetishmasligi va nima sovg'a qilishni bilmay bosh qotirishidir.",
-                task: "Shu HR-menejerlarga 'sovg'a tanlash boshog'rig'idan qutulishni' taklif qiluvchi va ularning vaqtini tejashga qaratilgan savdo matnini yoz.",
-                format: "LinkedIn va Telegram post formatida. Maksimal 3 ta abzas. Matn jozibador savol (hook) bilan boshlansin va oxirida PDF katalog yuklab olish tugmasi tursin.",
-                tone: "Ortiqcha romantikasiz, faqat biznes tilida, jiddiy, professional va muammoga aniq yechim ko'rsatuvchi ohangda."
-            },
-            crisis: {
-                role: "Sen yirik brendlar bilan ishlaydigan professional Inqiroz-Menejeri (Crisis PR expert) va PR-direktorsan.",
-                context: "Bizning etkazib berish xizmati kuryeri mijoz bilan tortishib qoldi va bu video ijtimoiy tarmoqlarda tarqalib ketdi. Odamlar g'azabda va boykot qilishmoqda.",
-                task: "Kompaniya nomidan ijtimoiy tarmoqlar foydalanuvchilari va jabrlangan mijoz uchun rasmiy uzrnoma va bayonot matnini tayyorla. Kuryer bilan shartnoma bekor qilingani aytilsin.",
-                format: "Instagram va Telegram uchun rasmiy press-reliz / bayonot formati. Qisqa va lo'nda, 4 ta xatboshidan oshmasin.",
-                tone: "Chuqur pushaymonlik aks etgan, o'ta madaniyatli, mas'uliyatni to'liq bo'yniga oladigan va rasmiy tilda."
-            },
-            edutech: {
-                role: "Sen IT va zamonaviy kasblar akademiyasining yetakchi lead-generation va marketing matnlari bo'yicha mutaxassisisan.",
-                context: "Biz yangi ochilgan 'Sun'iy Intellekt va Prompt Injiniring' kursimizga qabul boshladik. Auditoriyamiz hozirgi ishidan charchagan, kam oylik oladigan va 'AI mening ishimni tortib oladimi?' deb qo'rqayotgan 20-30 yoshli yoshlar.",
-                task: "Auditoriyadagi qo'rquvni sindirib, aksincha 'AI tufayli daromadni 2 baravar oshirish' imkoniyatini ko'rsatgan holda ularni bepul master-klassga ro'yxatdan o'tishga undovchi reklama matni yoz.",
-                format: "Telegram uchun uzoqroq o'qiladigan (long-read) marketing posti. Emojilardan me'yorida foydalanilsin. Oxirida havola bo'lsin.",
-                tone: "Ruhlantiruvchi, do'stona, ishonchli va bir oz agressiv marketing ohangida."
-            }
-        };
-
-        // Shablonni maydonlarga yuklash funksiyasi
-        function loadTemplate(key) {
-            if (templates[key]) {
-                inputs.role.value = templates[key].role;
-                inputs.context.value = templates[key].context;
-                inputs.task.value = templates[key].task;
-                inputs.format.value = templates[key].format;
-                inputs.tone.value = templates[key].tone;
-                updatePrompt();
-            }
+        if (nameInput.value.trim() === '' || durationInput.value === '') {
+            alert('Iltimos, vazifa nomi va soatini kiriting!');
+            return;
         }
 
-        // Real vaqtda promptni yig'ish funksiyasi
-        function updatePrompt() {
-            let promptText = "";
+        const task = {
+            id: Date.now(),
+            name: nameInput.value,
+            duration: parseFloat(durationInput.value),
+            status: 'pending' // pending, done, failed
+        };
 
-            if (inputs.role.value.trim()) promptText += `<span class="text-indigo-400 font-bold"># ROL (PERSONA):</span>\n${inputs.role.value.trim()}\n\n`;
-            if (inputs.context.value.trim()) promptText += `<span class="text-indigo-400 font-bold"># KONTEKST (VAZIYAT):</span>\n${inputs.context.value.trim()}\n\n`;
-            if (inputs.task.value.trim()) promptText += `<span class="text-indigo-400 font-bold"># VAZIFA (TASK):</span>\n${inputs.task.value.trim()}\n\n`;
-            if (inputs.format.value.trim()) promptText += `<span class="text-indigo-400 font-bold"># FORMAT (TUZILISHI):</span>\n${inputs.format.value.trim()}\n\n`;
-            if (inputs.tone.value.trim()) promptText += `<span class="text-indigo-400 font-bold"># MULOQOT OHANGI (TONE):</span>\n${inputs.tone.value.trim()}\n\n`;
+        tasks.push(task);
+        nameInput.value = '';
+        durationInput.value = '';
 
-            if (promptText.trim()) {
-                promptText += `<span class="text-amber-400 font-bold"># MUHIM QOIDA (KALKAGA QARSHI):</span>\nMenga matn yozganingda hech qachon rus yoki ingliz tilidan to'g'ridan-to'g'ri kalka tarjima qilma (masalan "qabul qilib oling", "nafasingiz va ishonchingiz uchun rahmat" kabi mantiqsiz iboralarni ishlatma). Har doim sof, tabiiy va jonli o'zbek tilida, jumlalarni mantiqiy bog'lab yoz.`;
-                promptResult.innerHTML = promptText.replace(/\n/g, '<br>');
-            } else {
-                promptResult.innerHTML = `<span class="text-slate-500 italic">Maydonlarni to'ldirishni boshlang yoki yuqoridagi tayyor shablonlardan birini tanlang...</span>`;
-            }
+        renderTasks();
+    }
+
+    // Vazifani muvaffaqiyatli deb belgilash (Pitichka)
+    function setDone(id) {
+        tasks = tasks.map(task => {
+            if (task.id === id) task.status = 'done';
+            return task;
+        });
+        renderTasks();
+    }
+
+    // Vazifani bajarilmadi deb belgilash (X)
+    function setFailed(id) {
+        tasks = tasks.map(task => {
+            if (task.id === id) task.status = 'failed';
+            return task;
+        });
+        renderTasks();
+    }
+
+    // Dashboardni yangilash va hisoblash funksiyasi
+    function updateDashboard() {
+        let total = 0;
+        let done = 0;
+        let failed = 0;
+
+        tasks.forEach(task => {
+            total += task.duration;
+            if (task.status === 'done') done += task.duration;
+            if (task.status === 'failed') failed += task.duration;
+        });
+
+        document.getElementById('total-hours').innerText = total + " soat";
+        document.getElementById('done-hours').innerText = done + " soat";
+        document.getElementById('failed-hours').innerText = failed + " soat";
+    }
+
+    // Vazifalarni ekranga chizish (Render)
+    function renderTasks() {
+        const container = document.getElementById('tasks-container');
+        container.innerHTML = '';
+
+        if (tasks.length === 0) {
+            container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Hozircha vazifalar qo'shilmadi.</p>`;
+            updateDashboard();
+            return;
         }
 
-        // Eventlarni bog'lash
-        Object.values(inputs).forEach(input => {
-            input.addEventListener('input', updatePrompt);
+        tasks.forEach(task => {
+            const taskItem = document.createElement('div');
+            taskItem.classList.add('task-item');
+            if (task.status === 'done') taskItem.classList.add('done');
+            if (task.status === 'failed') taskItem.classList.add('failed');
+
+            taskItem.innerHTML = `
+                <div class="task-info">
+                    <div class="task-title">${task.name}</div>
+                    <div class="task-time">⏱ Rejalashtirilgan vaqt: ${task.duration} soat</div>
+                </div>
+                <div class="task-actions">
+                    ${task.status === 'pending' ? `
+                        <button class="action-btn btn-check" onclick="setDone(${task.id})">✓</button>
+                        <button class="action-btn btn-fail" onclick="setFailed(${task.id})">✕</button>
+                    ` : `
+                        <span style="font-size: 0.9rem; font-weight: bold; color: ${task.status === 'done' ? 'var(--neon-green)' : 'var(--neon-red)'}">
+                            ${task.status === 'done' ? 'BAJARILDI' : 'YAKUNLANMADI'}
+                        </span>
+                    `}
+                </div>
+            `;
+            container.appendChild(taskItem);
         });
 
-        // Nusxalash funksiyasi
-        copyBtn.addEventListener('click', () => {
-            const textToCopy = promptResult.innerText;
-            
-            if (!textToCopy || textToCopy.includes('Maydonlarni to\'ldirishni boshlang')) {
-                alert('Nusxalash uchun avval kamida bitta maydonni to\'ldiring!');
-                return;
-            }
+        updateDashboard();
+    }
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                const originalContent = copyBtn.innerHTML;
-                copyBtn.innerHTML = `<i class="fa-solid fa-square-check text-xl"></i> Muvaffaqiyatli nusxalandi!`;
-                copyBtn.classList.replace('bg-emerald-600', 'bg-slate-700');
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalContent;
-                    copyBtn.classList.replace('bg-slate-700', 'bg-emerald-600');
-                }, 2500);
-            }).catch(err => {
-                console.error('Xatolik yuz berdi:', err);
-            });
-        });
+    // Ilk yuklangandagi holat
+    renderTasks();
+</script>
 
-        // Tozalash funksiyasi
-        clearBtn.addEventListener('click', () => {
-            if (confirm('Barcha maydonlarni rostdan ham tozalamoqchimisiz?')) {
-                Object.values(inputs).forEach(input => input.value = '');
-                updatePrompt();
-            }
-        });
-
-        // Dastlabki holatni yuklash
-        updatePrompt();
-    </script>
 </body>
 </html>

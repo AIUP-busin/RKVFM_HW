@@ -1,160 +1,189 @@
-import os
-import logging
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-import google.generativeai as genai
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>R-K-V-F-M Prompt Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-# Logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+    <header class="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-10 shadow-sm">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl tracking-wider">R-K-V-F-M</div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900">Prompt Injiniring</h1>
+                    <p class="text-xs text-slate-500">Tezkor muhandislik va prompt anatomiyasi platformasi</p>
+                </div>
+            </div>
+            <div class="text-sm bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full font-medium">
+                Najot Ta'lim &copy; 2026
+            </div>
+        </div>
+    </header>
 
-# API keys
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
-
-# Gemini sozlash
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
-
-# HR Agent system prompt
-SYSTEM_PROMPT = """Sen Ottimo Cafe (Toshkentdagi zamonaviy italyan-style kafe) uchun HR agentisan.
-Faqat O'zbek tilida javob ber.
-
-Ottimo Cafe haqida:
-- 25 xodim ishlaydi
-- Lavozimlari: barista, ofitsiant, oshpaz, kassir, menejer, tozalovchi
-- Ish vaqti: 08:00-22:00 (2 smena: 08:00-15:00 va 15:00-22:00)
-- Probatsiya muddati: 1 oy
-- Ish haqi: Barista 3-4 mln, Ofitsiant 2.5-3.5 mln, Menejer 6-8 mln UZS
-- O'zbekiston Mehnat kodeksiga mos ishlaydi
-
-HR vazifalaring:
-1. Xodim qabul — CV ko'rib chiqish, intervyu savollari, lavozim talablari
-2. Onboarding — yangi xodimga nima kerakligini tushuntirish
-3. Smena jadvali — taqsimlash, dam olish kunlari
-4. Ish haqi — hisoblash, bonus, jarima
-5. Ichki qoidalar — tartib, kafe standartlari
-6. Mojarolar — hal qilish yo'llari
-7. Mehnat qonunlari — O'zbekiston qonunchiligi bo'yicha
-
-Har doim do'stona, aniq va amaliy javob ber. Kerak bo'lsa ro'yxat yoki jadval ko'rinishida yoz."""
-
-# Har bir foydalanuvchi uchun suhbat tarixi
-user_sessions = {}
-
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Bot ishga tushganda"""
-    user_name = update.effective_user.first_name or "Salom"
-    welcome_text = f"""👋 Salom, {user_name}!
-
-Men **Ottimo Cafe HR Agentiman** 🍽️
-
-Quyidagi masalalarda yordam bera olaman:
-
-📋 Xodim qabul qilish
-📅 Smena jadvali
-💰 Ish haqi va bonuslar
-📝 Mehnat shartnomasi
-⚖️ Mehnat qonunlari
-🤝 Xodimlar bilan muammolar
-
-Savolingizni yozing, javob beraman!
-
-/help — yordam
-/clear — suhbatni tozalash"""
-    
-    await update.message.reply_text(welcome_text, parse_mode='Markdown')
-
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Yordam"""
-    help_text = """🆘 *Yordam*
-
-Menga istalgan HR savolini yozishingiz mumkin:
-
-*Misol savollar:*
-• Barista uchun talablar qanday?
-• Yangi xodimni qanday qabul qilamiz?
-• Smena jadvalini qanday tuzish kerak?
-• Probatsiya muddati qancha?
-• Xodim shikoyat qilsa nima qilamiz?
-• Intervyu savollari tayyorlab ber
-
-*Buyruqlar:*
-/start — Boshiga qaytish
-/clear — Suhbatni tozalash
-/help — Yordam"""
-    
-    await update.message.reply_text(help_text, parse_mode='Markdown')
-
-async def clear_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Suhbat tarixini tozalash"""
-    user_id = update.effective_user.id
-    user_sessions[user_id] = []
-    await update.message.reply_text("✅ Suhbat tozalandi. Yangi savol bering!")
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Xabarlarni qayta ishlash"""
-    user_id = update.effective_user.id
-    user_text = update.message.text
-
-    # Typing ko'rsatish
-    await context.bot.send_chat_action(
-        chat_id=update.effective_chat.id,
-        action="typing"
-    )
-
-    # Suhbat tarixini olish yoki yangi yaratish
-    if user_id not in user_sessions:
-        user_sessions[user_id] = []
-
-    try:
-        # Gemini ga yuborish
-        chat_history = user_sessions[user_id]
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        # To'liq prompt
-        full_prompt = f"{SYSTEM_PROMPT}\n\nFoydalanuvchi: {user_text}"
-        
-        if chat_history:
-            # Oldingi suhbatni qo'shish
-            history_text = "\n".join([
-                f"Foydalanuvchi: {h['user']}\nAgent: {h['agent']}"
-                for h in chat_history[-5:]  # Oxirgi 5 ta
-            ])
-            full_prompt = f"{SYSTEM_PROMPT}\n\nOldingi suhbat:\n{history_text}\n\nFoydalanuvchi: {user_text}"
+        <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-6">
+            <div>
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-indigo-600"></i> Prompt Konstruktori
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">Har bir blokni to'ldiring. O'ng tomonda tayyor prompt shakllanadi.</p>
+            </div>
 
-        response = model.generate_content(full_prompt)
-        reply = response.text
+            <div class="space-y-4">
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:border-indigo-200 transition">
+                    <label class="block text-sm font-semibold text-slate-900 mb-1 flex items-center justify-between">
+                        <span><span class="text-indigo-600 font-bold">R</span> — Rol (Persona)</span>
+                        <span class="text-xs font-normal text-slate-400">AI o'zini kim deb hisoblasin?</span>
+                    </label>
+                    <textarea id="role" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Masalan: Sen B2B sohasida ishlaydigan agressiv va aqlli kopiraytersan."></textarea>
+                </div>
 
-        # Tarixga qo'shish
-        user_sessions[user_id].append({
-            "user": user_text,
-            "agent": reply
-        })
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:border-indigo-200 transition">
+                    <label class="block text-sm font-semibold text-slate-900 mb-1 flex items-center justify-between">
+                        <span><span class="text-indigo-600 font-bold">K</span> — Kontekst (Vaziyat / Muammo)</span>
+                        <span class="text-xs font-normal text-slate-400">Mijoz dardi yoki fon ma'lumoti nima?</span>
+                    </label>
+                    <textarea id="context" rows="3" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Masalan: Biz 8-mart bayrami uchun yirik kompaniyalarning HR-menejerlariga korporativ tortlarni sotishimiz kerak. HRlarning dardi — vaqt yo'qotish."></textarea>
+                </div>
 
-        # Javob yuborish
-        await update.message.reply_text(reply)
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:border-indigo-200 transition">
+                    <label class="block text-sm font-semibold text-slate-900 mb-1 flex items-center justify-between">
+                        <span><span class="text-indigo-600 font-bold">V</span> — Vazifa (Task)</span>
+                        <span class="text-xs font-normal text-slate-400">AI aynan nima ish bajarishi kerak?</span>
+                    </label>
+                    <textarea id="task" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Masalan: Shu HR-menejerlarga 'sovg'a tanlash boshog'rig'idan qutulishni' taklif qiluvchi savdo matnini yoz."></textarea>
+                </div>
 
-    except Exception as e:
-        logger.error(f"Xato: {e}")
-        await update.message.reply_text(
-            "⚠️ Xatolik yuz berdi. Qaytadan urinib ko'ring yoki /clear buyrug'ini ishlating."
-        )
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:border-indigo-200 transition">
+                    <label class="block text-sm font-semibold text-slate-900 mb-1 flex items-center justify-between">
+                        <span><span class="text-indigo-600 font-bold">F</span> — Format (Tuzilishi)</span>
+                        <span class="text-xs font-normal text-slate-400">Matn hajmi, platformasi yoki cheklovlar</span>
+                    </label>
+                    <textarea id="format" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Masalan: Telegram post formatida. Maksimal 3 ta abzas. Boshida 'hook' gap bo'lsin va oxirida havola tursin."></textarea>
+                </div>
 
-def main():
-    """Botni ishga tushirish"""
-    app = Application.builder().token(TELEGRAM_TOKEN).build()
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50 hover:border-indigo-200 transition">
+                    <label class="block text-sm font-semibold text-slate-900 mb-1 flex items-center justify-between">
+                        <span><span class="text-indigo-600 font-bold">M</span> — Muloqot Ohangi (Tone)</span>
+                        <span class="text-xs font-normal text-slate-400">Matn qanday kayfiyatda bo'lsin?</span>
+                    </label>
+                    <textarea id="tone" rows="2" class="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Masalan: Jiddiy biznes tilda, ortiqcha pafos va romantikasiz, to'g'ridan-to'g'ri yechim beruvchi ohangda."></textarea>
+                </div>
+            </div>
 
-    # Handlerlar
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("help", help_command))
-    app.add_handler(CommandHandler("clear", clear_command))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+            <div class="flex justify-end pt-2">
+                <button id="clearBtn" class="text-sm font-medium text-rose-600 hover:bg-rose-50 px-4 py-2 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i> Hammasini tozalash
+                </button>
+            </div>
+        </section>
 
-    logger.info("Bot ishga tushdi!")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
+        <section class="lg:col-span-5 flex flex-col h-full space-y-4">
+            <div class="bg-slate-900 text-slate-100 rounded-2xl p-6 shadow-xl flex-1 flex flex-col border border-slate-800 sticky top-24">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i> Tayyor Prompt
+                    </h2>
+                    <span class="text-xs text-slate-400 bg-slate-800 px-2 py-1 rounded">Live Preview</span>
+                </div>
 
-if __name__ == "__main__":
-    main()
+                <div class="flex-1 bg-slate-950/80 rounded-xl p-4 border border-slate-800 overflow-y-auto text-sm font-mono leading-relaxed text-slate-300 min-h-[300px]" id="promptResult">
+                    </div>
+
+                <div class="mt-4 p-3 bg-indigo-950/40 border border-indigo-900/50 rounded-xl text-xs text-indigo-300 flex gap-2.5 items-start">
+                    <i class="fa-solid fa-shield-halved class='mt-0.5 text-indigo-400'"></i>
+                    <p><strong>Avtomatik himoya yoqilgan:</strong> Prompt oxiriga sun'iy intellekt "kalka" tarjima (masalan: <i>"Nafasingiz uchun rahmat"</i>) qilmasligi uchun maxsus sof o'zbek tili qoidasi qo'shildi.</p>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <button id="copyBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-semibold py-3 px-4 rounded-xl transition shadow-lg shadow-emerald-700/20 flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy"></i> Nusxalash (Copy)
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-400 mt-6">
+        Prompt Injiniring darsligi asosida ishlab chiqildi. ChatGPT va Claude uchun ideal strukturaviy yordamchi.
+    </footer>
+
+    <script>
+        const inputs = {
+            role: document.getElementById('role'),
+            context: document.getElementById('context'),
+            task: document.getElementById('task'),
+            format: document.getElementById('format'),
+            tone: document.getElementById('tone')
+        };
+
+        const promptResult = document.getElementById('promptResult');
+        const copyBtn = document.getElementById('copyBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        // Real vaqtda promptni yig'ish funksiyasi
+        function updatePrompt() {
+            let promptText = "";
+
+            if (inputs.role.value.trim()) promptText += `<span class="text-indigo-400"># ROL (PERSONA):</span>\n${inputs.role.value.trim()}\n\n`;
+            if (inputs.context.value.trim()) promptText += `<span class="text-indigo-400"># KONTEKST (VAZIYAT):</span>\n${inputs.context.value.trim()}\n\n`;
+            if (inputs.task.value.trim()) promptText += `<span class="text-indigo-400"># VAZIFA (TASK):</span>\n${inputs.task.value.trim()}\n\n`;
+            if (inputs.format.value.trim()) promptText += `<span class="text-indigo-400"># FORMAT (TUZILISHI):</span>\n${inputs.format.value.trim()}\n\n`;
+            if (inputs.tone.value.trim()) promptText += `<span class="text-indigo-400"># MULOQOT OHANGI (TONE):</span>\n${inputs.tone.value.trim()}\n\n`;
+
+            // Agar biror narsa yozilgan bo'lsa darsdagi "Kalkaga qarshi" qoidani qo'shish
+            if (promptText.trim()) {
+                promptText += `<span class="text-amber-400"># MUHIM QOIDA:</span>\nMenga matn yozganingda hech qachon rus yoki ingliz tilidan to'g'ridan-to'g'ri kalka tarjima qilma (masalan "qabul qilib oling", "nafasingiz va ishonchingiz uchun rahmat" kabi mantiqsiz so'z birikmalarini ishlatma). Har doim sof, tabiiy va jonli o'zbek tilida, jumlalarni mantiqiy bog'lab yoz.`;
+                promptResult.innerHTML = promptText.replace(/\n/g, '<br>');
+            } else {
+                promptResult.innerHTML = `<span class="text-slate-500 italic">Konstruktor maydonlarini to'ldirishni boshlang, bu yerda tayyor prompt paydo bo'ladi...</span>`;
+            }
+        }
+
+        // Har bir inputga event bog'lash
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', updatePrompt);
+        });
+
+        // Nusxalash (Copy) funksiyasi
+        copyBtn.addEventListener('click', () => {
+            // HTML taglardan tozalab faqat textni olish
+            const textToCopy = promptResult.innerText;
+            
+            if (!textToCopy || textToCopy.includes('Konstruktor maydonlarini')) {
+                alert('Nusxalash uchun avval promptni to'ldiring!');
+                return;
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = `<i class="fa-solid fa-check"></i> Nusxalandi!`;
+                copyBtn.classList.replace('bg-emerald-600', 'bg-slate-700');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.classList.replace('bg-slate-700', 'bg-emerald-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('Nusxalashda xatolik:', err);
+            });
+        });
+
+        // Tozalash funksiyasi
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Barcha maydonlarni tozalashni xohlaysizmi?')) {
+                Object.values(inputs).forEach(input => input.value = '');
+                updatePrompt();
+            }
+        });
+
+        // Ilk yuklangandagi holat
+        updatePrompt();
+    </script>
+</body>
+</html>

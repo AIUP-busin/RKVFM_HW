@@ -2,111 +2,43 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uyga Vazifa: Muqova Maktubi Siri</title>
+    <title>Shaxsiy va Byudjet Rejasi</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            line-height: 1.6;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
-            font-size: 24px;
-        }
-        h2 {
-            color: #2980b9;
-            font-size: 18px;
-            margin-top: 25px;
-        }
-        .box {
-            background-color: #fdfefe;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 0 4px 4px 0;
-        }
-        .cover-letter {
-            background-color: #f9f9f9;
-            border: 1px solid #e0e0e0;
-            padding: 20px;
-            border-radius: 6px;
-            font-style: italic;
-        }
-        .danger {
-            border-left-color: #e74c3c;
-            background-color: #fdf2f2;
-        }
-        .success {
-            border-left-color: #2ecc71;
-            background-color: #f4fbf7;
-        }
-        .badge {
-            display: inline-block;
-            background: #e1e8ed;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
+        body { font-family: sans-serif; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background-color: #f8f9fa; }
+        .action-btn { background-color: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .action-btn:hover { background-color: #0056b3; }
+        .highlight { background-color: #fff3cd; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Uyga vazifa: "Muqova maktubi siri"</h1>
-    <p><strong>Muddati:</strong> 12 iyun, 2026 yil 22:49</p>
-    
-    <hr>
+<h2>1 Oylik Shaxsiy va Byudjet Rejasi</h2>
+<table id="myTable">
+    <thead>
+        <tr>
+            <th>Kun</th>
+            <th>Ishlar</th>
+            <th>Byudjet</th>
+            <th>Natijalar</th>
+            <th>Boshqaruv</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr id="row1"><td>12-Iyun</td><td>Reja tuzish</td><td>0</td><td>Bajarildi</td><td><button class="action-btn" onclick="tahrirlash('row1')">Tahrirlash</button></td></tr>
+        <tr id="row2"><td>13-Iyun</td><td>O'quv vazifalari</td><td>-500k</td><td>Jarayonda</td><td><button class="action-btn" onclick="tahrirlash('row2')">Tahrirlash</button></td></tr>
+    </tbody>
+</table>
 
-    <h2>1. RKVFM Shablon Asosi (Kontekst)</h2>
-    <div class="box">
-        <p><strong>R (Rol):</strong> Sen kompaniyalarni hayratda qoldiruvchi karyera-konsultantsan.</p>
-        <p><strong>K (Kontekst - Vakansiya & Rezyume):</strong><br>
-        <span class="badge">Vakansiya (Payme):</span> Grafik dizayner. Fintex uchun vizual kontent, kreativ bannerlar, brendbuk bilan ishlash. Figma, Photoshop, Illustrator.<br>
-        <span class="badge">Rezyume qoralamasi:</span> Shahzod. 1.5 yillik tajriba (SMM agentlik, 20+ brend). Figma, PS, AI dasturlari.</p>
-    </div>
-
-    <h2>2. V, F, M: Tayyor Motivatsion Xat (4 ta abzas)</h2>
-    <div class="cover-letter">
-        <p>Assalomu alaykum, Payme jamoasi. Fintex bozorida o'z uslubi va soddaligi bilan ajralib turadigan brendingiz vizual tilini yanada kuchaytirish maqsadida ushbu xatni yozmoqdamman. SMM sohasidagi 1.5 yillik tajribam davomida murakkab g'oyalarni oddiy va jozibador vizuallarga aylantirish ko'nikmasini shakllantirdim, bu esa Payme platformasining foydalanuvchilar bilan aloqasini yanada mustahkamlashga xizmat qiladi.</p>
-        
-        <p>Oldingi ish joyimda 20 dan ortiq yirik brendlarning ijtimoiy tarmoqlari uchun kontent vizuallari va kreativ bannerlarini tayyorlaganman. Brendbuk (brandbook) qoidalari bilan ishlash va ularni cheklamagan holda yangi, kreativ g'oyalar bera olish mening eng kuchli tomonlarimdan biridir. Figma va Adobe paketlarida (Photoshop, Illustrator) ishlash tezligim yuqori bo'lgani sababli, jamoaning tezkor ish sur'atiga (deadline) to'liq moslasha olaman.</p>
-        
-        <p>Payme men uchun shunchaki navbatdagi ish joyi emas, balki murakkab moliyaviy mahsulotlarni vizual jihatdan sodda va tushunarli qilib foydalanuvchiga yetkazish imkoniyatidir. Jamoangizga shunchaki topshiriqni bajaruvchi ijrochi emas, balki dizayn jamoasining samaradorligini oshiradigan va kreativ yechimlar taklif qila oladigan mustaqil mutaxassis kerakligini tushunaman.</p>
-        
-        <p>Portfoliomdagi eng muvaffaqiyatli fintex va SMM keyslarini hamda Payme vizual uslubini qanday yaxshilash mumkinligi borasidagi g'oyalarimni suhbat davomida muhokama qilishga tayyorman. Tez orada portfolio va rezyumemni ko'rib chiqib, qayta aloqaga chiqasiz degan umiddaman.</p>
-    </div>
-
-    <h2>3. Kamida 1 ta joyini to'g'rilash (4-shart)</h2>
-    
-    <div class="box danger">
-        <strong>❌ Kuchsiz dastlabki abzas variant:</strong><br>
-        "Menga Payme brendi juda yoqadi, shuning uchun sizlarda ishlashni xohlayman. Fintex qiyin soha bo'lsa ham men buni o'rgana olaman va berilgan vazifalarni vaqtida qilishga harakat qilaman."
-    </div>
-
-    <div class="box">
-        <strong>💡 Karyera-konsultanti ko'rsatmasi:</strong><br>
-        Hissiyotlarga berilmang va o'zingizni faqat o'rganuvchi rolida ko'rsatmang. Fintexni qiyinchilik emas, balki professional imkoniyat deb taqdim eting. "Harakat qilaman" so'zini "tushunaman va qila olaman" degan o'ziga ishongan iboraga almashtiring.
-    </div>
-
-    <div class="box success">
-        <strong>✅ Yangi, kuchaytirilgan abzas (Maktubning 3-abzasiga kiritildi):</strong><br>
-        "Payme men uchun shunchaki navbatdagi ish joyi emas, balki murakkab moliyaviy mahsulotlarni vizual jihatdan sodda va tushunarli qilib foydalanuvchiga yetkazish imkoniyatidir. Jamoangizga shunchaki topshiriqni bajaruvchi ijrochi emas, balki dizayn jamoasining samaradorligini oshiradigan va kreativ yechimlar taklif qila oladigan mustaqil mutaxassis kerakligini tushunaman."
-    </div>
-</div>
-
+<script>
+    function tahrirlash(rowId) {
+        const row = document.getElementById(rowId);
+        row.classList.add('highlight');
+        alert("Siz: 'Shu kunni bo'shat va vazifani keyingi haftaga sur' deb buyruq berdingiz.");
+        // Bu yerda backend yoki Google Sheets API bilan bog'lash mumkin
+    }
+</script>
 </body>
 </html>

@@ -2,59 +2,39 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <title>Shaxsiy Byudjet Rejasi</title>
+    <title>Target International School | Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 30px; background-color: #f4f7f6; }
-        h2 { color: #333; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        th, td { border: 1px solid #ddd; padding: 15px; text-align: left; }
-        th { background-color: #2c3e50; color: white; }
-        .high-priority { color: #e74c3c; font-weight: bold; }
-        .status-pending { background-color: #fff3cd; }
-        .action-btn { background-color: #27ae60; color: white; border: none; padding: 8px 12px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
-        .action-btn:hover { background-color: #219150; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f7f6; padding: 20px; }
+        .wrapper { max-width: 1100px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .header { border-bottom: 3px solid #2c3e50; margin-bottom: 20px; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #2c3e50; color: white; padding: 12px; }
+        td { border: 1px solid #ddd; padding: 12px; }
+        .move-btn { background: #e67e22; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .status-on { background-color: #d4edda; }
     </style>
 </head>
 <body>
-
-<h2>1 Oylik Shaxsiy va Byudjet Rejasi</h2>
-
-<table id="rejaTable">
-    <thead>
-        <tr>
-            <th>Kun</th>
-            <th>Vazifa</th>
-            <th>Prioritet</th>
-            <th>Byudjet (so'm)</th>
-            <th>Natija</th>
-            <th>Boshqaruv</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="wrapper">
+    <div class="header">
+        <h1>Target International School</h1>
+        <p>1 Oylik Strategik Reja va Byudjet Monitoringi</p>
+    </div>
+    <table>
+        <tr><th>Kun</th><th>Akademik/Byudjet Vazifasi</th><th>Byudjet (UZS)</th><th>Natija</th><th>Amal</th></tr>
         <tr id="row1">
             <td>12-Iyun</td>
-            <td>Oylik daromad va xarajatni taqsimlash</td>
-            <td class="high-priority">Yuqori</td>
+            <td>Target o'quv dasturi tahlili</td>
             <td>0</td>
-            <td>Reja tayyor</td>
-            <td><button class="action-btn" onclick="tahrirlash('row1')">Surish</button></td>
+            <td>Bajarildi</td>
+            <td><button class="move-btn" onclick="tahrirlash('row1')">Surish</button></td>
         </tr>
-        <tr id="row2">
-            <td>13-Iyun</td>
-            <td>O'quv kursi to'lovi</td>
-            <td>O'rta</td>
-            <td>-500,000</td>
-            <td>To'landi</td>
-            <td><button class="action-btn" onclick="tahrirlash('row2')">Surish</button></td>
-        </tr>
-    </tbody>
-</table>
-
+    </table>
+</div>
 <script>
-    function tahrirlash(rowId) {
-        const row = document.getElementById(rowId);
-        row.classList.add('status-pending');
-        alert("DIQQAT: " + rowId + " kungi vazifa keyingi haftaga surildi!");
+    function tahrirlash(id) {
+        document.getElementById(id).classList.add('status-on');
+        alert("Tizim xabari: Vazifa keyingi haftaga surildi va investorlar bazasi yangilandi.");
     }
 </script>
 </body>

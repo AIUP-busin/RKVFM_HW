@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a0e27">
+    <title>IT Solutions Pro - Enterprise Management System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #00d4ff;
+            --color-secondary: #0066ff;
+            --color-accent: #00ff88;
+            --color-danger: #ff3333;
+            --color-warning: #ffa500;
+            --color-dark-1: #0a0e27;
+            --color-dark-2: #13182f;
+            --color-dark-3: #1a2847;
+            --color-dark-4: #2a3f6b;
+            --color-light: #e8f0ff;
+            --color-text: #f0f4ff;
+            --color-text-secondary: #a0aec0;
+            --shadow-sm: 0 4px 15px rgba(0, 212, 255, 0.08);
+            --shadow-md: 0 12px 40px rgba(0, 102, 255, 0.12);
+            --shadow-lg: 0 20px 60px rgba(0, 102, 255, 0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--color-dark-1) 0%, var(--color-dark-2) 100%);
+            color: var(--color-text);
+            overflow-x: hidden;
+        }
+
+        /* GLASSMORPHISM */
+        .glass {
+            background: rgba(13, 18, 47, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 16px;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 4px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            gap: 0;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: linear-gradient(180deg, var(--color-dark-2) 0%, var(--color-dark-3) 100%);
+            padding: 30px 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(0, 212, 255, 0.1);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 50px;
+            padding: 0 15px;
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sidebar-brand i {
+            font-size: 24px;
+            color: var(--color-primary);
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+            background: rgba(0, 212, 255, 0.1);
+            padding-left: 20px;
+        }
+
+        .nav-link.active {
+            color: var(--color-primary);
+            background: rgba(0, 212, 255, 0.15);
+            padding-left: 20px;
+            font-weight: 600;
+        }
+
+        .nav-link.active::before {
+            height: 24px;
+        }
+
+        .nav-link i {
+            font-size: 18px;
+            min-width: 18px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 280px;
+            padding: 40px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .header {
+            margin-bottom: 50px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-info h1 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-info p {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            background: var(--color-dark-3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--color-text);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+            border: none;
+            color: white !important;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 102, 255, 0.3);
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .filter-input {
+            position: relative;
+        }
+
+        .filter-input label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-input input,
+        .filter-input select {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--color-dark-3);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--color-text);
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-input input::placeholder,
+        .filter-input select {
+            color: var(--color-text-secondary);
+        }
+
+        .filter-input input:hover,
+        .filter-input select:hover {
+            border-color: var(--color-primary);
+        }
+
+        .filter-input input:focus,
+        .filter-input select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            glass
+            padding: 30px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+        }
+
+        .kpi-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            color: rgba(0, 212, 255, 0.2);
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            color: var(--color-accent);
+            font-weight: 600;
+        }
+
+        .kpi-change.negative {
+            color: var(--color-danger);
+        }
+
+        /* ===== CHARTS ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            glass
+            padding: 30px;
+            border-radius: 16px;
+            transition: var(--transition);
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+
+        .chart-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-header {
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 4px;
+        }
+
+        .chart-subtitle {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-actions button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--color-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 12px;
+        }
+
+        .chart-actions button:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+        }
+
+        /* ===== TABLE ===== */
+        .table-card {
+            glass
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .table-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 102, 255, 0.05) 100%);
+        }
+
+        .table-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            padding: 16px 30px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px 30px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.05);
+            font-size: 14px;
+            color: var(--color-text);
+        }
+
+        tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--color-accent);
+        }
+
+        .badge-danger {
+            background: rgba(255, 51, 51, 0.2);
+            color: var(--color-danger);
+        }
+
+        .badge-warning {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--color-warning);
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            glass
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            transition: var(--transition);
+        }
+
+        .stat-box:hover {
+            border-color: var(--color-primary);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--color-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--color-text-secondary);
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* ===== TABS ===== */
+        .tab {
+            display: none;
+        }
+
+        .tab.active {
+            display: block;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1400px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                transition: var(--transition);
+                z-index: 2000;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .header-top {
+                flex-direction: column;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .header-controls {
+                width: 100%;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <i class="fas fa-server"></i>
+                IT Solutions PRO
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Main Menu</div>
+                <div class="nav-item">
+                    <a class="nav-link active" onclick="switchTab('dashboard')">
+                        <i class="fas fa-chart-line"></i>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="switchTab('sales')">
+                        <i class="fas fa-shopping-cart"></i>
+                        Sotuvlar
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="switchTab('performance')">
+                        <i class="fas fa-chart-bar"></i>
+                        Performance
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Analytics</div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="switchTab('team')">
+                        <i class="fas fa-users"></i>
+                        Jamoa
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="switchTab('customers')">
+                        <i class="fas fa-user-tie"></i>
+                        Mijozlar
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="switchTab('products')">
+                        <i class="fas fa-cube"></i>
+                        Mahsulotlar
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Settings</div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        Export
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" onclick="printReport()">
+                        <i class="fas fa-print"></i>
+                        Print
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main">
+            <!-- DASHBOARD TAB -->
+            <div class="tab active" id="dashboard">
+                <!-- Header -->
+                <div class="header">
+                    <div class="header-top">
+                        <div class="header-info">
+                            <h1>Executive Dashboard</h1>
+                            <p>Real-time analytics & business intelligence</p>
+                        </div>
+                        <div class="header-controls">
+                            <button class="control-btn" onclick="refreshData()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                            <button class="control-btn btn-primary" onclick="exportData()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filters">
+                        <div class="filter-input">
+                            <label>🏢 Filial</label>
+                            <select onchange="updateDashboard()">
+                                <option value="">Barcha Filiallar</option>
+                                <option value="Toshkent">Toshkent</option>
+                                <option value="Andijon">Andijon</option>
+                                <option value="Online">Online</option>
+                            </select>
+                        </div>
+                        <div class="filter-input">
+                            <label>📊 Status</label>
+                            <select onchange="updateDashboard()">
+                                <option value="">Barcha Statuslar</option>
+                                <option value="Yakunlandi">✓ Yakunlandi</option>
+                                <option value="Bekor qilindi">✕ Bekor qilindi</option>
+                                <option value="Qaytarildi">↩ Qaytarildi</option>
+                            </select>
+                        </div>
+                        <div class="filter-input">
+                            <label>👥 Mijoz Tipi</label>
+                            <select onchange="updateDashboard()">
+                                <option value="">Barchasi</option>
+                                <option value="B2B">B2B</option>
+                                <option value="B2C">B2C</option>
+                            </select>
+                        </div>
+                        <div class="filter-input">
+                            <label>🔍 Qidirish</label>
+                            <input type="text" placeholder="Buyurtma ID yoki menejer..." onkeyup="updateDashboard()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpi-grid" id="kpiCards"></div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">💰 Daromad Dinamikasi</div>
+                                <div class="chart-subtitle">Filial va status bo'ylab</div>
+                            </div>
+                            <div class="chart-actions">
+                                <button><i class="fas fa-expand"></i></button>
+                                <button><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">📦 Mahsulot Taqsimoti</div>
+                                <div class="chart-subtitle">Kategoriya bo'ylab analitika</div>
+                            </div>
+                            <div class="chart-actions">
+                                <button><i class="fas fa-expand"></i></button>
+                                <button><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="productChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">👥 Mijoz Segmentatsiyasi</div>
+                                <div class="chart-subtitle">B2B vs B2C taqqoslash</div>
+                            </div>
+                            <div class="chart-actions">
+                                <button><i class="fas fa-expand"></i></button>
+                                <button><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="customerChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">📈 Status Taqsimoti</div>
+                                <div class="chart-subtitle">Buyurtma holati</div>
+                            </div>
+                            <div class="chart-actions">
+                                <button><i class="fas fa-expand"></i></button>
+                                <button><i class="fas fa-download"></i></button>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Orders Table -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">📋 So'nggi Buyurtmalar</div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sana</th>
+                                    <th>ID</th>
+                                    <th>Filial</th>
+                                    <th>Menejer</th>
+                                    <th>Mahsulot</th>
+                                    <th>Soni</th>
+                                    <th>Narx</th>
+                                    <th>Chegirma</th>
+                                    <th>Yakuniy</th>
+                                    <th>Tipi</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SALES TAB -->
+            <div class="tab" id="sales">
+                <div class="header" style="margin-bottom: 40px;">
+                    <h1 style="font-size: 28px; margin-bottom: 10px;">Sotuvlar Analitikasi</h1>
+                </div>
+                <div class="stats-grid" id="salesStats"></div>
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">📊 Barcha Sotuvlar</div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sana</th>
+                                    <th>ID</th>
+                                    <th>Filial</th>
+                                    <th>Mahsulot</th>
+                                    <th>Soni</th>
+                                    <th>Narx (M)</th>
+                                    <th>Chegirma</th>
+                                    <th>Yakuniy (M)</th>
+                                    <th>Tipi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="salesTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERFORMANCE TAB -->
+            <div class="tab" id="performance">
+                <div class="header" style="margin-bottom: 40px;">
+                    <h1 style="font-size: 28px; margin-bottom: 10px;">Performance Analytics</h1>
+                </div>
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">👨‍💼 Menejer Performance</div>
+                                <div class="chart-subtitle">Daromad bo'ylab</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="managerChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div>
+                                <div class="chart-title">🏢 Filial Performance</div>
+                                <div class="chart-subtitle">Hariqat ko'rsatkichlari</div>
+                            </div>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="branchChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-grid" id="performanceStats"></div>
+            </div>
+
+            <!-- TEAM TAB -->
+            <div class="tab" id="team">
+                <div class="header" style="margin-bottom: 40px;">
+                    <h1 style="font-size: 28px; margin-bottom: 10px;">Jamoa Statistikasi</h1>
+                </div>
+                <div class="stats-grid" id="teamStats"></div>
+            </div>
+
+            <!-- CUSTOMERS TAB -->
+            <div class="tab" id="customers">
+                <div class="header" style="margin-bottom: 40px;">
+                    <h1 style="font-size: 28px; margin-bottom: 10px;">Mijoz Analitikasi</h1>
+                </div>
+                <div class="stats-grid" id="customerAnalytics"></div>
+            </div>
+
+            <!-- PRODUCTS TAB -->
+            <div class="tab" id="products">
+                <div class="header" style="margin-bottom: 40px;">
+                    <h1 style="font-size: 28px; margin-bottom: 10px;">Mahsulot Analitikasi</h1>
+                </div>
+                <div class="stats-grid" id="productAnalytics"></div>
+                <div class="table-card">
+                    <div class="table-header">
+                        <div class="table-title">📦 Mahsulotlar Statistikasi</div>
+                    </div>
+                    <div class="table-wrapper" id="productTable"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let allData = [];
+        let filteredData = [];
+        let charts = {};
+
+        const rawData = [
+["2025-12-27","IT-70053","Toshkent","Akmal R.","IT xizmat",1,23097000,5,21942150,"B2B","Yakunlandi"],
+["2025-12-27","IT-70626","Andijon","Sardor T.","IT xizmat",2,19320000,5,36708000,"B2B","Qaytarildi"],
+["2025-12-27","IT-70162","Toshkent","Nodira A.","Noutbuk",2,1150000,0,2300000,"B2C","Yakunlandi"],
+["2025-12-27","IT-70528","Toshkent","Nodira A.","Noutbuk",1,18882000,10,16993800,"B2C","Bekor qilindi"],
+["2025-12-28","IT-70548","Toshkent","Malika H.","Dastur litsenziyasi",1,8497000,10,7647300,"B2B","Yakunlandi"],
+["2025-12-28","IT-70137","Online","Nodira A.","Monitor",2,1930000,10,3474000,"B2C","Qaytarildi"],
+["2025-12-28","IT-70719","Toshkent","Nodira A.","Noutbuk",2,13430000,5,25517000,"B2C","Bekor qilindi"],
+["2025-06-11","IT-70076","Andijon","Sardor T.","IT xizmat",2,23534000,6,44243920,"B2C","Yakunlandi"],
+["2025-06-01","IT-70366","Toshkent","Sardor T.","Noutbuk",2,11411000,5,21680900,"","Bekor qilindi"],
+["2025-09-07","IT-70709","","Dilnoza S.","Dastur litsenziyasi",1,11380000,0,11380000,"","Yakunlandi"],
+["2025-10-27","IT-70144","Online","Dilnoza S.","Noutbuk",1,13422000,0,13422000,"B2C","Yakunlandi"],
+["2025-10-26","IT-70001","Andijon","Dilnoza S.","Aksessuar",1,398000,10,358200,"B2C","Yakunlandi"]
+        ];
+
+        function initializeApp() {
+            allData = rawData.map(row => ({
+                sana: row[0],
+                buyurtmaId: row[1],
+                filial: row[2] || 'Online',
+                menejer: row[3],
+                mahsulot: row[4],
+                soni: parseInt(row[5]),
+                narx: parseInt(row[6]),
+                chegirma: parseInt(row[7]),
+                yakuniy: parseInt(row[8]),
+                tipi: row[9] || 'N/A',
+                status: row[10]
+            }));
+
+            filteredData = [...allData];
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            const filial = document.querySelector('[onchange="updateDashboard()"]')?.value || '';
+            const status = document.querySelectorAll('[onchange="updateDashboard()"]')[1]?.value || '';
+            const tipi = document.querySelectorAll('[onchange="updateDashboard()"]')[2]?.value || '';
+            const search = document.querySelector('input[placeholder*="Qidirish"]')?.value.toLowerCase() || '';
+
+            filteredData = allData.filter(d => {
+                return (!filial || d.filial === filial) &&
+                       (!status || d.status === status) &&
+                       (!tipi || d.tipi === tipi) &&
+                       (!search || d.buyurtmaId.toLowerCase().includes(search) || d.menejer.toLowerCase().includes(search));
+            });
+
+            updateKPIs();
+            updateCharts();
+            updateTables();
+            updateStats();
+        }
+
+        function updateKPIs() {
+            const totalRevenue = filteredData.reduce((s, d) => s + d.yakuniy, 0);
+            const totalOrders = filteredData.length;
+            const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+            const completed = filteredData.filter(d => d.status === 'Yakunlandi').length;
+            const completionRate = totalOrders > 0 ? (completed / totalOrders * 100) : 0;
+
+            document.getElementById('kpiCards').innerHTML = `
+                <div class="kpi-card">
+                    <i class="kpi-icon fas fa-money-bill-wave"></i>
+                    <div class="kpi-label">Jami Daromad</div>
+                    <div class="kpi-value">${(totalRevenue / 1000000).toFixed(1)}M</div>
+                    <div class="kpi-change">UZS</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="kpi-icon fas fa-shopping-cart"></i>
+                    <div class="kpi-label">Buyurtmalar</div>
+                    <div class="kpi-value">${totalOrders}</div>
+                    <div class="kpi-change">ta</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="kpi-icon fas fa-chart-pie"></i>
+                    <div class="kpi-label">O'rtacha Buyurtma</div>
+                    <div class="kpi-value">${(avgOrder / 1000000).toFixed(1)}M</div>
+                    <div class="kpi-change">UZS</div>
+                </div>
+                <div class="kpi-card">
+                    <i class="kpi-icon fas fa-percentage"></i>
+                    <div class="kpi-label">Yakunlanish Rate</div>
+                    <div class="kpi-value">${completionRate.toFixed(0)}%</div>
+                    <div class="kpi-change">${completed}/${totalOrders}</div>
+                </div>
+            `;
+        }
+
+        function updateCharts() {
+            const branchData = {};
+            const productData = {};
+            const customerData = {};
+            const statusData = {};
+            const managerData = {};
+
+            filteredData.forEach(d => {
+                branchData[d.filial] = (branchData[d.filial] || 0) + d.yakuniy;
+                productData[d.mahsulot] = (productData[d.mahsulot] || 0) + d.soni;
+                customerData[d.tipi] = (customerData[d.tipi] || 0) + d.yakuniy;
+                statusData[d.status] = (statusData[d.status] || 0) + 1;
+                managerData[d.menejer] = (managerData[d.menejer] || 0) + d.yakuniy;
+            });
+
+            // Revenue Chart
+            if (charts.revenue) charts.revenue.destroy();
+            charts.revenue = new Chart(document.getElementById('revenueChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(branchData),
+                    datasets: [{
+                        label: 'Daromad (M UZS)',
+                        data: Object.values(branchData).map(v => (v / 1000000).toFixed(1)),
+                        backgroundColor: ['#00d4ff', '#0066ff', '#00ff88'],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { color: '#f0f4ff' } }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.1)' } },
+                        x: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.05)' } }
+                    }
+                }
+            });
+
+            // Product Chart
+            if (charts.product) charts.product.destroy();
+            charts.product = new Chart(document.getElementById('productChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(productData),
+                    datasets: [{
+                        data: Object.values(productData),
+                        backgroundColor: ['#00d4ff', '#0066ff', '#00ff88', '#ffa500', '#ff3333', '#9c27b0']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#f0f4ff' } } }
+                }
+            });
+
+            // Customer Chart
+            if (charts.customer) charts.customer.destroy();
+            charts.customer = new Chart(document.getElementById('customerChart'), {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(customerData),
+                    datasets: [{
+                        data: Object.values(customerData).map(v => (v / 1000000).toFixed(1)),
+                        backgroundColor: ['#0066ff', '#00d4ff']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#f0f4ff' } } }
+                }
+            });
+
+            // Status Chart
+            if (charts.status) charts.status.destroy();
+            charts.status = new Chart(document.getElementById('statusChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(statusData),
+                    datasets: [{
+                        label: 'Soni',
+                        data: Object.values(statusData),
+                        backgroundColor: ['#00ff88', '#ff3333', '#ffa500'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.05)' } },
+                        x: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.1)' } }
+                    }
+                }
+            });
+
+            // Manager Chart
+            if (charts.manager) charts.manager.destroy();
+            charts.manager = new Chart(document.getElementById('managerChart'), {
+                type: 'bar',
+                indexAxis: 'y',
+                data: {
+                    labels: Object.keys(managerData),
+                    datasets: [{
+                        label: 'Daromad (M UZS)',
+                        data: Object.values(managerData).map(v => (v / 1000000).toFixed(1)),
+                        backgroundColor: '#00d4ff',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.05)' } },
+                        x: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.1)' } }
+                    }
+                }
+            });
+
+            // Branch Chart
+            if (charts.branch) charts.branch.destroy();
+            charts.branch = new Chart(document.getElementById('branchChart'), {
+                type: 'bar',
+                indexAxis: 'y',
+                data: {
+                    labels: Object.keys(branchData),
+                    datasets: [{
+                        label: 'Daromad (M UZS)',
+                        data: Object.values(branchData).map(v => (v / 1000000).toFixed(1)),
+                        backgroundColor: '#00ff88',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.05)' } },
+                        x: { ticks: { color: '#a0aec0' }, grid: { color: 'rgba(0, 212, 255, 0.1)' } }
+                    }
+                }
+            });
+        }
+
+        function updateTables() {
+            // Dashboard Table
+            const dashboardHtml = filteredData.slice(0, 10).map(d => `
+                <tr>
+                    <td>${d.sana}</td>
+                    <td><strong>${d.buyurtmaId}</strong></td>
+                    <td>${d.filial}</td>
+                    <td>${d.menejer}</td>
+                    <td>${d.mahsulot}</td>
+                    <td>${d.soni}</td>
+                    <td>${(d.narx / 1000000).toFixed(2)}M</td>
+                    <td>${d.chegirma}%</td>
+                    <td style="color: #00d4ff;">${(d.yakuniy / 1000000).toFixed(2)}M</td>
+                    <td><span class="badge badge-${d.tipi === 'B2B' ? 'success' : 'warning'}">${d.tipi}</span></td>
+                    <td><span class="badge badge-${d.status === 'Yakunlandi' ? 'success' : d.status === 'Bekor qilindi' ? 'danger' : 'warning'}">${d.status}</span></td>
+                </tr>
+            `).join('');
+            document.getElementById('dashboardTable').innerHTML = dashboardHtml;
+
+            // Sales Table
+            const salesHtml = filteredData.map(d => `
+                <tr>
+                    <td>${d.sana}</td>
+                    <td>${d.buyurtmaId}</td>
+                    <td>${d.filial}</td>
+                    <td>${d.mahsulot}</td>
+                    <td>${d.soni}</td>
+                    <td>${(d.narx / 1000000).toFixed(2)}</td>
+                    <td>${d.chegirma}%</td>
+                    <td style="color: #00d4ff; font-weight: 600;">${(d.yakuniy / 1000000).toFixed(2)}</td>
+                    <td><span class="badge badge-${d.tipi === 'B2B' ? 'success' : 'warning'}">${d.tipi}</span></td>
+                </tr>
+            `).join('');
+            document.getElementById('salesTable').innerHTML = salesHtml;
+
+            // Product Table
+            const productStats = {};
+            filteredData.forEach(d => {
+                if (!productStats[d.mahsulot]) {
+                    productStats[d.mahsulot] = { orders: 0, revenue: 0, qty: 0 };
+                }
+                productStats[d.mahsulot].orders++;
+                productStats[d.mahsulot].revenue += d.yakuniy;
+                productStats[d.mahsulot].qty += d.soni;
+            });
+
+            const productTableHtml = `
+                <table style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Mahsulot</th>
+                            <th>Soni</th>
+                            <th>Buyurtma</th>
+                            <th>Daromad</th>
+                            <th>O'rtacha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${Object.entries(productStats).map(([product, stats]) => `
+                            <tr>
+                                <td>${product}</td>
+                                <td>${stats.qty}</td>
+                                <td>${stats.orders}</td>
+                                <td style="color: #00d4ff;">${(stats.revenue / 1000000).toFixed(1)}M</td>
+                                <td>${(stats.revenue / stats.orders / 1000000).toFixed(1)}M</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('productTable').innerHTML = productTableHtml;
+        }
+
+        function updateStats() {
+            const totalRevenue = filteredData.reduce((s, d) => s + d.yakuniy, 0);
+            const b2bRevenue = filteredData.filter(d => d.tipi === 'B2B').reduce((s, d) => s + d.yakuniy, 0);
+            const b2cRevenue = filteredData.filter(d => d.tipi === 'B2C').reduce((s, d) => s + d.yakuniy, 0);
+            const completedRevenue = filteredData.filter(d => d.status === 'Yakunlandi').reduce((s, d) => s + d.yakuniy, 0);
+
+            document.getElementById('salesStats').innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${(totalRevenue / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">Jami Daromad</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.length}</div>
+                    <div class="stat-label">Jami Buyurtma</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${(totalRevenue / filteredData.length / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">O'rtacha Buyurtma</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${(filteredData.reduce((s, d) => s + (d.narx * d.soni * d.chegirma / 100), 0) / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">Jami Chegirma</div>
+                </div>
+            `;
+
+            document.getElementById('performanceStats').innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.filter(d => d.status === 'Yakunlandi').length}</div>
+                    <div class="stat-label">Yakunlandi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.filter(d => d.status === 'Bekor qilindi').length}</div>
+                    <div class="stat-label">Bekor qilindi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.filter(d => d.status === 'Qaytarildi').length}</div>
+                    <div class="stat-label">Qaytarildi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${(completedRevenue / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">Yakunlandi Daromad</div>
+                </div>
+            `;
+
+            const managerStats = {};
+            filteredData.forEach(d => {
+                if (!managerStats[d.menejer]) managerStats[d.menejer] = { orders: 0, revenue: 0 };
+                managerStats[d.menejer].orders++;
+                managerStats[d.menejer].revenue += d.yakuniy;
+            });
+
+            document.getElementById('teamStats').innerHTML = Object.entries(managerStats).map(([name, stats]) => `
+                <div class="stat-box">
+                    <div class="stat-value">${stats.orders}</div>
+                    <div class="stat-label">${name}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('customerAnalytics').innerHTML = `
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.filter(d => d.tipi === 'B2B').length}</div>
+                    <div class="stat-label">B2B Mijozlar</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${filteredData.filter(d => d.tipi === 'B2C').length}</div>
+                    <div class="stat-label">B2C Mijozlar</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${(b2bRevenue / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">B2B Daromad</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value">${(b2cRevenue / 1000000).toFixed(1)}M</div>
+                    <div class="stat-label">B2C Daromad</div>
+                </div>
+            `;
+
+            const productStats = {};
+            filteredData.forEach(d => {
+                productStats[d.mahsulot] = (productStats[d.mahsulot] || 0) + 1;
+            });
+
+            document.getElementById('productAnalytics').innerHTML = Object.entries(productStats).map(([product, count]) => `
+                <div class="stat-box">
+                    <div class="stat-value">${count}</div>
+                    <div class="stat-label">${product}</div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            event.target.closest('.nav-link').classList.add('active');
+        }
+
+        function refreshData() {
+            updateDashboard();
+        }
+
+        function exportData() {
+            let csv = 'Sana,ID,Filial,Menejer,Mahsulot,Soni,Narx,Chegirma,Yakuniy,Tipi,Status\n';
+            filteredData.forEach(d => {
+                csv += `${d.sana},${d.buyurtmaId},${d.filial},${d.menejer},${d.mahsulot},${d.soni},${d.narx},${d.chegirma},${d.yakuniy},${d.tipi},${d.status}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `sales_report_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function printReport() {
+            window.print();
+        }
+
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>
